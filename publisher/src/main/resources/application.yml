@@ -1,0 +1,28 @@
+logging:
+  pattern:
+    dateformat: MM-dd HH:mm:ss:SSS
+
+spring:
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    virtual-host: /hmall # 虚拟主机
+    username: hmall
+    password: 123
+
+    # 生产者重试机制
+    connection-timeout: 1s # 设置MQ的连接超时时间
+    template:
+      retry:
+        enabled: true # 开启超时重试机制
+        initial-interval: 1000ms # 失败后的初始等待时间
+        multiplier: 2 # 失败后下次的等待时长倍数 （第一次等待1s,第二次等待2s，第三次等待4秒）
+        max-attempts: 3 # 最大重试次数
+
+    # 生产者确认机制
+    publisher-confirm-type: correlated
+      # publisher-confirm-type有三种模式可选：
+        #- none：关闭confirm机制
+        #- simple：同步阻塞等待MQ的回执
+        #- correlated：MQ异步回调返回回执
+    publisher-returns: true # 开启publisher return机制 （- 当消息投递到MQ，但是路由失败时，通过【Publisher Return】返回异常信息，同时返回ack的确认信息，代表投递成功）
